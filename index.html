@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b10">
+
   <title>Pop the Beast!</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Inter, system-ui, sans-serif;
     }
@@ -16,21 +22,29 @@
       position: relative;
       overflow: hidden;
       aspect-ratio: 1;
+      min-width: 0;
       border-radius: 18px;
       background: #090b10;
       border: 1px solid #303644;
       cursor: crosshair;
+      transition: border-color 160ms ease, transform 120ms ease;
+    }
+
+    .hole:hover {
+      border-color: #59634a;
     }
 
     .hole::after {
       content: "";
       position: absolute;
+      z-index: 2;
       bottom: 8%;
       left: 12%;
       width: 76%;
       height: 15%;
       background: #202530;
       border-radius: 50%;
+      pointer-events: none;
     }
 
     .creature {
@@ -46,7 +60,6 @@
       transition: bottom 180ms ease-out;
     }
 
-    /* Your JS can toggle this class to pop the creature up */
     .hole.active .creature {
       bottom: 12%;
     }
@@ -60,8 +73,15 @@
       border-radius: 50% 50% 15% 15%;
     }
 
-    .ear.left { left: 5%; transform: rotate(-25deg); }
-    .ear.right { right: 5%; transform: rotate(25deg); }
+    .ear.left {
+      left: 5%;
+      transform: rotate(-25deg);
+    }
+
+    .ear.right {
+      right: 5%;
+      transform: rotate(25deg);
+    }
 
     .eyes {
       position: absolute;
@@ -93,185 +113,192 @@
       background: #ff9b9b;
     }
 
-    .cheek.left { left: 12%; }
-    .cheek.right { right: 12%; }
+    .cheek.left {
+      left: 12%;
+    }
+
+    .cheek.right {
+      right: 12%;
+    }
+
+    /* Defeated creature animation */
+    .creature.defeated {
+      bottom: 12%;
+      transform: translateX(-50%) scaleY(0.48) scaleX(1.18);
+      border-radius: 45% 45% 30% 30%;
+      background: #a6d934;
+      transition: transform 120ms ease-out, background 120ms ease-out;
+    }
+
+    .creature.defeated .eyes {
+      width: 0;
+      height: 0;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .creature.defeated .eyes::before {
+      content: "× ×";
+      position: absolute;
+      left: -4px;
+      top: -12px;
+      width: 54px;
+      color: #17200e;
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .creature.defeated .mouth {
+      top: 65%;
+      left: 42%;
+      width: 16%;
+      height: 12%;
+      border-radius: 50%;
+      background: #17200e;
+    }
+
+    .creature.defeated::before,
+    .creature.defeated::after {
+      position: absolute;
+      color: #f5ffbd;
+      animation: impact-pop 250ms ease-out;
+    }
+
+    .creature.defeated::before {
+      content: "✦";
+      top: -16%;
+      left: -12%;
+      font-size: 22px;
+    }
+
+    .creature.defeated::after {
+      content: "✦";
+      top: -12%;
+      right: -12%;
+      font-size: 17px;
+    }
+
+    @keyframes impact-pop {
+      from {
+        opacity: 0;
+        transform: scale(0.3) rotate(-30deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+      }
+    }
+
+    /* Custom hammer cursor */
+    #game-grid,
+    #game-grid .hole {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg transform='rotate(-40 20 20)'%3E%3Crect x='17' y='14' width='7' height='22' rx='2' fill='%23c8ff45' stroke='%2317200e' stroke-width='1.5'/%3E%3Crect x='7' y='5' width='27' height='12' rx='3' fill='%23d9e1ec' stroke='%2317202e' stroke-width='2'/%3E%3Crect x='9' y='7' width='23' height='3' rx='1' fill='%23ffffff' opacity='.7'/%3E%3C/g%3E%3C/svg%3E") 12 10, crosshair;
+    }
+
+    #game-grid .hole:active {
+      transform: scale(0.97);
+    }
 
     button:focus-visible {
       outline: 2px solid #c8ff45;
       outline-offset: 3px;
     }
 
-    
-/* Defeated creature animation */
-.creature.defeated {
-  bottom: 12%;
-  transform: translateX(-50%) scaleY(0.48) scaleX(1.18);
-  border-radius: 45% 45% 30% 30%;
-  background: #a6d934;
-  transition:
-    transform 120ms ease-out,
-    background 120ms ease-out;
-}
+    @media (max-width: 380px) {
+      .hole {
+        border-radius: 13px;
+      }
 
-/* X-shaped eyes */
-.creature.defeated .eyes {
-  width: 0;
-  height: 0;
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-}
+      .eyes {
+        box-shadow: 22px 0 0 #17200e;
+      }
+    }
 
-.creature.defeated .eyes::before {
-  content: "×  ×";
-  position: absolute;
-  left: -4px;
-  top: -12px;
-  width: 54px;
-  color: #17200e;
-  font-size: 25px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-/* Flattened, open mouth */
-.creature.defeated .mouth {
-  top: 65%;
-  left: 42%;
-  width: 16%;
-  height: 12%;
-  border-radius: 50%;
-  background: #17200e;
-}
-
-/* Impact marks */
-.creature.defeated::before {
-  content: "✦";
-  position: absolute;
-  top: -16%;
-  left: -12%;
-  color: #f5ffbd;
-  font-size: 22px;
-  animation: impact-pop 250ms ease-out;
-}
-
-.creature.defeated::after {
-  content: "✦";
-  position: absolute;
-  top: -12%;
-  right: -12%;
-  color: #f5ffbd;
-  font-size: 17px;
-  animation: impact-pop 250ms ease-out;
-}
-
-@keyframes impact-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.3) rotate(-30deg);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1) rotate(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .creature,
-  .creature.defeated,
-  .creature.defeated::before,
-  .creature.defeated::after {
-    animation: none;
-    transition: none;
-  }
-}
-
-/* Hammer cursor during gameplay */
-#game-grid,
-#game-grid .hole {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg transform='rotate(-40 20 20)'%3E%3Crect x='17' y='14' width='7' height='22' rx='2' fill='%23c8ff45' stroke='%2317200e' stroke-width='1.5'/%3E%3Crect x='7' y='5' width='27' height='12' rx='3' fill='%23d9e1ec' stroke='%2317202e' stroke-width='2'/%3E%3Crect x='9' y='7' width='23' height='3' rx='1' fill='%23ffffff' opacity='.7'/%3E%3C/g%3E%3C/svg%3E") 12 10, crosshair;
-}
-
-#game-grid .hole:active {
-  cursor: grabbing;
-  transform: scale(0.97);
-}
-
+    @media (prefers-reduced-motion: reduce) {
+      .creature,
+      .creature.defeated,
+      .creature.defeated::before,
+      .creature.defeated::after,
+      .hole {
+        animation: none;
+        transition: none;
+      }
+    }
   </style>
 </head>
 
-<body class="min-h-screen bg-[#090b10] text-white
-             flex items-center justify-center p-4">
+<body class="min-h-screen bg-[#090b10] text-white px-4 py-8 sm:py-12">
 
-  <main class="w-full max-w-lg space-y-6">
+  <main class="mx-auto w-full max-w-xl space-y-6">
 
     <!-- Header -->
-    <header class="flex items-center justify-between">
+    <header class="flex items-center justify-between gap-4">
       <div>
-        <p class="text-xs tracking-[0.25em] text-gray-400">
-          ARCADE GAME / 001
-        </p>
-        <h1 class="mt-2 text-3xl font-black tracking-tight">
+        
+
+        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
           POP THE <span class="text-[#c8ff45]">BEAST!</span>
         </h1>
-        <p class="mt-1 text-sm text-gray-400">
+
+        <p class="mt-2 text-sm text-gray-400">
           Catch the little troublemaker.
         </p>
       </div>
 
-      <div class="rounded-2xl bg-[#202817] p-4 text-2xl">
+      <div class="flex h-14 w-14 shrink-0 items-center justify-center
+                  rounded-2xl border border-[#c8ff45]/10
+                  bg-[#202817] text-2xl">
         ⚡
       </div>
     </header>
 
-    <!-- Stats -->
-    <section class="grid grid-cols-3 gap-3">
-      <div class="rounded-2xl border border-white/5
-                  bg-[#151922] p-4">
-        <p class="text-xs text-gray-400">POINTS</p>
-        <p id="score" class="mt-2 text-3xl font-bold
-                             text-[#c8ff45]">0</p>
+    <!-- Game Layout -->
+<div class="grid grid-cols-[100px_minmax(0,1fr)] items-start gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:gap-4">
+
+  <!-- Stats: Left Side -->
+  <section class="grid grid-cols-1 gap-3">
+
+    <div class="rounded-2xl border border-white/5 bg-[#151922] p-3 sm:p-4">
+      <p class="text-[10px] tracking-wider text-gray-400">POINTS</p>
+      <p id="score" class="mt-2 text-2xl font-bold text-[#c8ff45] sm:text-3xl">0</p>
+    </div>
+
+    <div class="rounded-2xl border border-white/5 bg-[#151922] p-3 sm:p-4">
+      <p class="text-[10px] tracking-wider text-gray-400">TIME</p>
+      <p class="mt-2 text-2xl font-bold sm:text-3xl">
+        <span id="timer">30</span><span class="text-[#c8ff45]">s</span>
+      </p>
+    </div>
+
+    <div class="rounded-2xl border border-white/5 bg-[#151922] p-3 sm:p-4">
+      <p class="text-[10px] tracking-wider text-gray-400">LIVES</p>
+      <div id="lives" class="mt-3 flex flex-wrap gap-1 text-lg text-[#ff7777]">
+        <span>♥</span><span>♥</span><span>♥</span>
       </div>
+    </div>
 
-      <div class="rounded-2xl border border-white/5
-                  bg-[#151922] p-4">
-        <p class="text-xs text-gray-400">TIME</p>
-        <p class="mt-2 text-3xl font-bold">
-          <span id="timer">30</span><span
-            class="text-[#c8ff45]">s</span>
-        </p>
-      </div>
+  </section>
 
-      <div class="rounded-2xl border border-white/5
-                  bg-[#151922] p-4">
-        <p class="text-xs text-gray-400">LIVES</p>
-        <div id="lives" class="mt-3 flex gap-1 text-xl">
-          <span>♥</span><span>♥</span><span>♥</span>
-        </div>
-      </div>
-    </section>
+  <!-- Game Board: Right Side -->
+  <section class="min-w-0 rounded-3xl border border-white/10 bg-[#11151d] p-3 sm:p-5">
 
-    <!-- Game board -->
-    <section class="rounded-3xl border border-white/10
-                    bg-[#11151d] p-4 sm:p-5">
+    <div class="mb-4 flex items-center justify-between gap-2">
+      <h2 class="text-xs font-semibold tracking-wide sm:text-sm">
+        THE PLAYGROUND
+      </h2>
 
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-sm font-semibold tracking-wide">
-          THE PLAYGROUND
-        </h2>
-        <span class="rounded-full border border-white/10
-                     px-3 py-1 text-xs text-[#c8ff45]">
-          3 × 3
-        </span>
-      </div>
+      <span class="shrink-0 rounded-full border border-white/10 px-2 py-1 text-[10px] text-[#c8ff45] sm:px-3 sm:text-xs">
+        3 × 3
+      </span>
+    </div>
 
-      <div id="game-grid" class="grid grid-cols-3 gap-3">
+<!-- Game Grid -->
+      <div id="game-grid" class="grid grid-cols-3 gap-3 sm:gap-4">
 
-        <!-- Repeat this hole structure 9 times.
-             Change each hole's data-index from 0 to 8. -->
-        <button class="hole" data-index="0"
-                aria-label="Hole 1">
+        <button type="button" class="hole" data-index="0" aria-label="Hole 1">
           <div class="creature" aria-hidden="true">
             <span class="ear left"></span>
             <span class="ear right"></span>
@@ -282,104 +309,145 @@
           </div>
         </button>
 
-        <button class="hole" data-index="1" aria-label="Hole 2">
+        <button type="button" class="hole" data-index="1" aria-label="Hole 2">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="2" aria-label="Hole 3">
+        <button type="button" class="hole" data-index="2" aria-label="Hole 3">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="3" aria-label="Hole 4">
+        <button type="button" class="hole" data-index="3" aria-label="Hole 4">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="4" aria-label="Hole 5">
+        <button type="button" class="hole" data-index="4" aria-label="Hole 5">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="5" aria-label="Hole 6">
+        <button type="button" class="hole" data-index="5" aria-label="Hole 6">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="6" aria-label="Hole 7">
+        <button type="button" class="hole" data-index="6" aria-label="Hole 7">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="7" aria-label="Hole 8">
+        <button type="button" class="hole" data-index="7" aria-label="Hole 8">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
-        <button class="hole" data-index="8" aria-label="Hole 9">
+        <button type="button" class="hole" data-index="8" aria-label="Hole 9">
           <div class="creature" aria-hidden="true">
-            <span class="ear left"></span><span class="ear right"></span>
-            <span class="eyes"></span><span class="mouth"></span>
-            <span class="cheek left"></span><span class="cheek right"></span>
+            <span class="ear left"></span>
+            <span class="ear right"></span>
+            <span class="eyes"></span>
+            <span class="mouth"></span>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
           </div>
         </button>
 
       </div>
 
-      <p id="game-status" aria-live="polite"
-         class="mt-4 text-center text-sm text-gray-400">
-        Ready? Let's catch this beast.
-      </p>
-    </section>
+    <p id="game-status" aria-live="polite"
+       class="mt-4 text-center text-xs text-gray-400 sm:text-sm">
+      Ready? Let's catch this beast.
+    </p>
 
-    
-<!-- Controls -->
-<div class="grid grid-cols-2 gap-3">
-  <button id="start-btn"
-    class="w-full rounded-2xl bg-[#c8ff45] py-4
-           font-bold text-[#101409] transition
-           hover:bg-[#d7ff78] active:scale-[0.98]">
-    ▶ &nbsp; START GAME
-  </button>
+  </section>
 
-  <button id="reset-btn"
-    class="w-full rounded-2xl border border-white/10
-           bg-[#202530] py-4 font-bold text-white
-           transition hover:bg-[#303644]
-           active:scale-[0.98]">
-    ↻ &nbsp; RESET
-  </button>
 </div>
 
+    <!-- Controls -->
+    <div class="grid grid-cols-2 gap-3">
 
-    <p class="text-center text-xs text-gray-500">
-      30 SECONDS · 3 LIVES · HOW MANY CAN YOU CATCH?
-    </p>
+      <button type="button" id="start-btn"
+        class="w-full rounded-2xl bg-[#c8ff45] py-4
+               text-sm font-extrabold tracking-wide text-[#101409]
+               transition hover:bg-[#d7ff78] active:scale-[0.98]">
+        ▶ &nbsp; START GAME
+      </button>
+
+      <button type="button" id="reset-btn"
+        class="w-full rounded-2xl border border-white/10
+               bg-[#202530] py-4 text-sm font-bold tracking-wide
+               text-white transition hover:bg-[#303644]
+               active:scale-[0.98]">
+        ↻ &nbsp; RESET
+      </button>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="flex flex-wrap items-center justify-center gap-x-2
+                   gap-y-1 text-center text-[10px] font-medium
+                   tracking-[0.12em] text-gray-600 sm:text-xs">
+      <span>30 SECONDS</span>
+      <span class="text-[#c8ff45]">·</span>
+      <span>3 LIVES</span>
+      <span class="text-[#c8ff45]">·</span>
+      <span>HOW MANY CAN YOU CATCH?</span>
+    </footer>
 
   </main>
 
   <script src="index.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+

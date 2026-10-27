@@ -14,24 +14,37 @@ let timeCount = 30;
 let time;
 let beast;
 let beastTime;
+let StartClickedCounter = 0;
 let index = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 startBtn.addEventListener('click', (e) => {
-  time = setInterval(() => {
-    timeCount--;
-    if (timeCount === 0) {
-      clearInterval(beast);
-      clearInterval(time);
-    }
+  scoreCount = 0;
+  timeCount = 30;
+  StartClickedCounter = 0;
+  StartClickedCounter++;
+  if (StartClickedCounter === 1) {
+    gameStatus.textContent = `Catch it before it escapes!`;
+    time = setInterval(() => {
+      timeCount--;
+      if (timeCount === 0) {
+        clearInterval(beast);
+        clearInterval(time);
+        clearInterval(beastTime);
+        StartClickedCounter = 0;
+      }
 
-    timer.textContent = `${timeCount}`;
+      timer.textContent = `${timeCount}`;
 
-  }, 1000);
+    }, 1000);
 
 
-  beast = setInterval(() => {
-    beastShow();
-  }, 1400);
+    beast = setInterval(() => {
+      beastShow();
+    }, 1400);
+
+  } else {
+
+  }
 
 
 
@@ -72,6 +85,11 @@ function beastShow() {
 
 
 resetBtn.addEventListener('click', (e) => {
+  reset();
+})
+
+
+function reset() {
   clearInterval(beast);
   clearInterval(time);
   clearInterval(beastTime);
@@ -79,7 +97,9 @@ resetBtn.addEventListener('click', (e) => {
   score.textContent = `0`;
   scoreCount = 0;
   timeCount = 30;
-  index.forEach((value)=>{
+  StartClickedCounter = 0;
+  gameStatus.textContent = `Ready? Let's catch this beast.`;
+  index.forEach((value) => {
     document.querySelector(`[data-index="${value}"]`).classList.remove(`active`);
   })
-})
+}
