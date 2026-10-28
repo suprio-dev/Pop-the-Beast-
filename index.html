@@ -1,53 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090b10">
-
+  <meta name="theme-color" content="#170f33">
   <title>Pop the Beast!</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --ink: #0e0824;
+      --panel: #2a1b5e;
+      --panel-2: #3a2680;
+      --mint: #4ff2c8;
+      --sun: #ffd23f;
+      --hot: #ff4f6d;
+      --hot-d: #b3203d;
+      --muted: #b9aee8;
     }
+
+    * { box-sizing: border-box; margin: 0; }
 
     body {
-      font-family: Inter, system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem 3rem;
+      font-family: Nunito, system-ui, sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 79, 109, .22), transparent 40%),
+        radial-gradient(circle at 88% 0%, rgba(79, 242, 200, .18), transparent 45%),
+        linear-gradient(180deg, #170f33, #241552 60%, #2e1a5e);
+      background-attachment: fixed;
     }
 
+    /* tiny starfield */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .5;
+      background-size: 220px 170px;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 100px 90px, rgba(255, 255, 255, .7), transparent),
+        radial-gradient(2px 2px at 170px 25px, var(--sun), transparent),
+        radial-gradient(1.5px 1.5px at 60px 140px, var(--mint), transparent);
+    }
+
+    main {
+      position: relative;
+      display: grid;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-family: Bungee, Impact, sans-serif;
+      font-weight: 400;
+      font-size: clamp(1.9rem, 8vw, 2.8rem);
+      line-height: 1;
+      color: var(--sun);
+      text-shadow: 3px 3px 0 var(--hot), 6px 6px 0 var(--ink);
+    }
+
+    h1 span { display: inline-block; transform: rotate(-3deg); }
+
+    .tagline { margin-top: .9rem; font-weight: 800; font-size: .9rem; color: var(--muted); }
+
+    .badge {
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      width: 3.6rem;
+      height: 3.6rem;
+      font-size: 1.7rem;
+      background: var(--sun);
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      box-shadow: 0 4px 0 var(--ink);
+      transform: rotate(6deg);
+    }
+
+    /* ---------- Layout + stats ---------- */
+    .layout {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      align-items: start;
+      gap: .75rem;
+    }
+
+    .stats { display: grid; gap: .75rem; }
+
+    .stat {
+      padding: .7rem .8rem;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      border-radius: 18px;
+      box-shadow: 0 5px 0 var(--ink), inset 0 2px 0 rgba(255, 255, 255, .08);
+    }
+
+    .stat-label { font-size: .78rem; font-weight: 800; color: var(--muted); }
+
+    .stat-value {
+      margin-top: .3rem;
+      font-family: Bungee, Impact, sans-serif;
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      line-height: 1.1;
+    }
+
+    #score { color: var(--sun); }
+    #timer { color: #fff; }
+    .unit { color: var(--mint); font-size: .6em; }
+    #lives { font-size: 1.05rem; color: var(--hot); padding-top: .25rem; }
+    #high-score { color: var(--mint); }
+
+    .best-row { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
+    .best-row .stat-value { margin-top: 0; }
+    .best-row .trophy { font-size: 1.2rem; }
+    .stat-note { margin-top: .2rem; font-size: .68rem; font-weight: 800; color: #8f82c9; }
+
+    /* ---------- Board ---------- */
+    .board {
+      min-width: 0;
+      padding: .8rem;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      border-radius: 26px;
+      box-shadow: 0 7px 0 var(--ink), inset 0 2px 0 rgba(255, 255, 255, .08);
+    }
+
+    .board-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      margin-bottom: .9rem;
+    }
+
+    .board-title { font-family: Bungee, Impact, sans-serif; font-weight: 400; font-size: .85rem; }
+
+    .pill {
+      padding: .15rem .6rem;
+      font-size: .75rem;
+      font-weight: 800;
+      color: var(--mint);
+      border: 2px solid var(--mint);
+      border-radius: 99px;
+    }
+
+    #game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; }
+
+    #game-status {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: .85rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    /* ---------- Holes + beasts ---------- */
     .hole {
       position: relative;
       overflow: hidden;
       aspect-ratio: 1;
       min-width: 0;
+      padding: 0;
+      border: 3px solid var(--ink);
       border-radius: 18px;
-      background: #090b10;
-      border: 1px solid #303644;
-      cursor: crosshair;
+      background:
+        radial-gradient(ellipse 46% 22% at 50% 84%, #07030f 0 98%, transparent 100%),
+        linear-gradient(180deg, #4a33a0, #2e1d6b);
       transition: border-color 160ms ease, transform 120ms ease;
     }
 
-    .hole:hover {
-      border-color: #59634a;
-    }
+    .hole:hover { border-color: var(--mint); }
 
+    /* dirt lip in front of the beast */
     .hole::after {
       content: "";
       position: absolute;
       z-index: 2;
-      bottom: 8%;
-      left: 12%;
-      width: 76%;
-      height: 15%;
-      background: #202530;
-      border-radius: 50%;
+      left: -3%;
+      bottom: -3%;
+      width: 106%;
+      height: 26%;
       pointer-events: none;
+      background: linear-gradient(180deg, #8a5a43, #5a3828);
+      border-top: 3px solid var(--ink);
+      border-radius: 50% 50% 0 0 / 45% 45% 0 0;
     }
 
     .creature {
+      --b: #4ff2c8;
       position: absolute;
       z-index: 1;
       bottom: -100%;
@@ -55,399 +214,356 @@
       width: 74%;
       aspect-ratio: 1;
       transform: translateX(-50%);
+      border: 3px solid var(--ink);
       border-radius: 42% 42% 35% 35%;
-      background: #c8ff45;
-      transition: bottom 180ms ease-out;
+      background: radial-gradient(circle at 32% 25%, rgba(255, 255, 255, .5), transparent 35%), var(--b);
+      box-shadow: inset 0 -8px 0 rgba(0, 0, 0, .15);
+      transition: bottom 180ms cubic-bezier(.2, 1.3, .4, 1);
     }
 
-    .hole.active .creature {
-      bottom: 12%;
-    }
+    .hole.active .creature { bottom: 12%; }
 
     .ear {
       position: absolute;
-      top: -10%;
+      top: -12%;
       width: 28%;
       height: 30%;
-      background: #c8ff45;
+      background: var(--b);
+      border: 3px solid var(--ink);
+      border-bottom: 0;
       border-radius: 50% 50% 15% 15%;
     }
+    .ear.left { left: 5%; transform: rotate(-25deg); }
+    .ear.right { right: 5%; transform: rotate(25deg); }
 
-    .ear.left {
-      left: 5%;
-      transform: rotate(-25deg);
-    }
+    /* eyes: container + two pseudo eyes, so they scale with the hole */
+    .eyes { position: absolute; top: 34%; left: 20%; width: 60%; height: 19%; }
 
-    .ear.right {
-      right: 5%;
-      transform: rotate(25deg);
-    }
-
-    .eyes {
+    .eyes::before,
+    .eyes::after {
+      content: "";
       position: absolute;
-      top: 38%;
-      left: 23%;
-      width: 12%;
-      height: 15%;
+      top: 0;
+      height: 100%;
+      aspect-ratio: 1;
       border-radius: 50%;
-      background: #17200e;
-      box-shadow: 29px 0 0 #17200e;
+      background: radial-gradient(circle at 34% 30%, #fff 0 16%, var(--ink) 18%);
     }
+    .eyes::before { left: 0; }
+    .eyes::after { right: 0; }
 
     .mouth {
       position: absolute;
-      top: 63%;
+      top: 62%;
       left: 38%;
       width: 24%;
       height: 10%;
-      border-radius: 4px 4px 12px 12px;
-      background: #17200e;
+      background: var(--ink);
+      border-radius: 4px 4px 14px 14px;
     }
 
     .cheek {
       position: absolute;
-      top: 58%;
-      width: 12%;
-      height: 7%;
+      top: 55%;
+      width: 13%;
+      height: 8%;
+      background: rgba(255, 110, 150, .75);
       border-radius: 50%;
-      background: #ff9b9b;
+    }
+    .cheek.left { left: 9%; }
+    .cheek.right { right: 9%; }
+
+    /* ---------- Danger beast ---------- */
+    .creature.danger { --b: #ff4f6d; border-radius: 35% 35% 45% 45%; }
+
+    .creature.danger .ear {
+      top: -14%;
+      height: 32%;
+      background: var(--sun);
+      border: 0;
+      border-radius: 0;
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
     }
 
-    .cheek.left {
-      left: 12%;
+    .creature.danger .eyes::before,
+    .creature.danger .eyes::after { background: #fff; }
+    .creature.danger .eyes::before { clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 100%); }
+    .creature.danger .eyes::after { clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%); }
+
+    .creature.danger .mouth {
+      left: 32%;
+      width: 36%;
+      height: 14%;
+      background: linear-gradient(180deg, #fff 0 35%, var(--ink) 35%);
     }
 
-    .cheek.right {
-      right: 12%;
+    .hole.active .creature.danger { animation: danger-glow .45s ease-in-out infinite alternate; }
+
+    @keyframes danger-glow {
+      to { box-shadow: 0 0 22px 6px rgba(255, 79, 109, .7), inset 0 -8px 0 rgba(0, 0, 0, .15); }
     }
 
-    /* Defeated creature animation */
+    /* ---------- Defeated (must stay after .danger) ---------- */
     .creature.defeated {
       bottom: 12%;
-      transform: translateX(-50%) scaleY(0.48) scaleX(1.18);
+      transform: translateX(-50%) scale(1.15, .5);
       border-radius: 45% 45% 30% 30%;
-      background: #a6d934;
-      transition: transform 120ms ease-out, background 120ms ease-out;
+      filter: brightness(.88);
+      transition: transform 120ms ease-out, filter 120ms ease-out;
     }
 
-    .creature.defeated .eyes {
-      width: 0;
-      height: 0;
-      background: transparent;
-      border-radius: 0;
-      box-shadow: none;
+    .creature.defeated .eyes::before,
+    .creature.defeated .eyes::after {
+      content: "×";
+      display: grid;
+      place-items: center;
+      clip-path: none;
+      background: none;
+      color: var(--ink);
+      font: 800 clamp(1rem, 4.5vw, 1.6rem) / 1 Nunito, sans-serif;
     }
 
-    .creature.defeated .eyes::before {
-      content: "× ×";
-      position: absolute;
-      left: -4px;
-      top: -12px;
-      width: 54px;
-      color: #17200e;
-      font-size: 25px;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .creature.defeated .mouth {
-      top: 65%;
-      left: 42%;
-      width: 16%;
-      height: 12%;
-      border-radius: 50%;
-      background: #17200e;
-    }
+    .creature.defeated .mouth { top: 66%; left: 42%; width: 16%; height: 12%; border-radius: 50%; }
 
     .creature.defeated::before,
     .creature.defeated::after {
       position: absolute;
-      color: #f5ffbd;
+      color: var(--sun);
       animation: impact-pop 250ms ease-out;
     }
+    .creature.defeated::before { content: "✦"; top: -22%; left: -12%; font-size: 1.4rem; }
+    .creature.defeated::after { content: "✦"; top: -16%; right: -12%; font-size: 1.05rem; }
 
-    .creature.defeated::before {
-      content: "✦";
-      top: -16%;
-      left: -12%;
-      font-size: 22px;
-    }
+    .hole:has(.creature.defeated) { animation: shake 220ms ease-out; }
 
-    .creature.defeated::after {
-      content: "✦";
-      top: -12%;
-      right: -12%;
-      font-size: 17px;
+    @keyframes shake {
+      25% { translate: -3px 0; }
+      75% { translate: 3px 0; }
     }
 
     @keyframes impact-pop {
-      from {
-        opacity: 0;
-        transform: scale(0.3) rotate(-30deg);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) rotate(0);
-      }
+      from { opacity: 0; transform: scale(.3) rotate(-30deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
     }
 
-    /* Custom hammer cursor */
+    /* ---------- Hammer cursor ---------- */
     #game-grid,
     #game-grid .hole {
       cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg transform='rotate(-40 20 20)'%3E%3Crect x='17' y='14' width='7' height='22' rx='2' fill='%23c8ff45' stroke='%2317200e' stroke-width='1.5'/%3E%3Crect x='7' y='5' width='27' height='12' rx='3' fill='%23d9e1ec' stroke='%2317202e' stroke-width='2'/%3E%3Crect x='9' y='7' width='23' height='3' rx='1' fill='%23ffffff' opacity='.7'/%3E%3C/g%3E%3C/svg%3E") 12 10, crosshair;
     }
+    #game-grid .hole:active { transform: scale(.96); }
 
-    #game-grid .hole:active {
-      transform: scale(0.97);
+    /* ---------- Buttons ---------- */
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      font-family: Bungee, Impact, sans-serif;
+      font-size: .9rem;
+      color: var(--ink);
+      background: var(--sun);
+      border: 3px solid var(--ink);
+      border-radius: 18px;
+      box-shadow: 0 5px 0 var(--ink);
+      cursor: pointer;
+      transition: transform 90ms ease, box-shadow 90ms ease, filter 120ms ease;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+    .btn-ghost { color: #fff; background: var(--panel-2); }
+
+    button:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+
+    footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .4rem 1.25rem;
+      font-size: .75rem;
+      font-weight: 800;
+      color: #8f82c9;
+      text-align: center;
     }
 
-    button:focus-visible {
-      outline: 2px solid #c8ff45;
-      outline-offset: 3px;
+    /* ---------- Overlays ---------- */
+    .game-over-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(14, 8, 36, .72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .game-over-overlay.show { display: flex; }
+
+    .game-over-card {
+      width: 100%;
+      max-width: 380px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      background: var(--panel);
+      border: 4px solid var(--mint);
+      border-radius: 28px;
+      box-shadow: 0 8px 0 var(--ink), 0 30px 80px rgba(0, 0, 0, .5);
+      animation: modal-enter 380ms cubic-bezier(.2, 1.4, .4, 1);
+    }
+    #lives-out-overlay .game-over-card { border-color: var(--hot); }
+
+    .overlay-emoji { display: inline-block; font-size: 3.2rem; animation: wiggle 900ms ease-in-out 250ms 2; }
+    .overlay-kicker { margin-top: .6rem; font-size: .9rem; font-weight: 800; color: var(--muted); }
+    .game-over-card h2 { margin-top: .3rem; font-family: Bungee, Impact, sans-serif; font-weight: 400; font-size: 2rem; }
+    .overlay-text { margin-top: .6rem; font-weight: 600; color: var(--muted); }
+
+    .score-box { margin: 1.4rem 0; padding: 1rem; background: var(--ink); border-radius: 18px; }
+    .score-box p:first-child { font-size: .8rem; font-weight: 800; color: var(--muted); }
+    .score-box p:last-child { margin-top: .3rem; font-family: Bungee, Impact, sans-serif; font-size: 3.4rem; line-height: 1; }
+    #time-up-score { color: var(--sun); }
+    #lives-out-score { color: var(--hot); }
+
+    @keyframes modal-enter {
+      from { opacity: 0; transform: translateY(20px) scale(.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes wiggle {
+      25% { transform: rotate(-12deg); }
+      75% { transform: rotate(12deg); }
+    }
+
+    /* ---------- Responsive + motion ---------- */
+    @media (min-width: 640px) {
+      .layout { grid-template-columns: 150px minmax(0, 1fr); gap: 1rem; }
+      .board { padding: 1.1rem; }
+      #game-grid { gap: .9rem; }
     }
 
     @media (max-width: 380px) {
-      .hole {
-        border-radius: 13px;
-      }
-
-      .eyes {
-        box-shadow: 22px 0 0 #17200e;
-      }
+      .hole { border-radius: 13px; }
+      .stat { padding: .6rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .creature,
-      .creature.defeated,
-      .creature.defeated::before,
-      .creature.defeated::after,
-      .hole {
-        animation: none;
-        transition: none;
-      }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-[#090b10] text-white px-4 py-8 sm:py-12">
+<body>
 
-  <main class="mx-auto w-full max-w-xl space-y-6">
+  <main>
 
-    <!-- Header -->
-    <header class="flex items-center justify-between gap-4">
+    <header>
       <div>
-        
-
-        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
-          POP THE <span class="text-[#c8ff45]">BEAST!</span>
-        </h1>
-
-        <p class="mt-2 text-sm text-gray-400">
-          Catch the little troublemaker.
-        </p>
+        <h1>Pop the <span>Beast!</span></h1>
+        <p class="tagline">Catch the little troublemaker.</p>
       </div>
-
-      <div class="flex h-14 w-14 shrink-0 items-center justify-center
-                  rounded-2xl border border-[#c8ff45]/10
-                  bg-[#202817] text-2xl">
-        ⚡
-      </div>
+      <div class="badge">⚡</div>
     </header>
 
-    <!-- Game Layout -->
-<div class="grid grid-cols-[100px_minmax(0,1fr)] items-start gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:gap-4">
+    <div class="layout">
 
-  <!-- Stats: Left Side -->
-  <section class="grid grid-cols-1 gap-3">
+      <section class="stats">
+        <div class="stat">
+          <p class="stat-label">Points</p>
+          <p id="score" class="stat-value">0</p>
+        </div>
 
-    <div class="rounded-2xl border border-white/5 bg-[#151922] p-3 sm:p-4">
-      <p class="text-[10px] tracking-wider text-gray-400">POINTS</p>
-      <p id="score" class="mt-2 text-2xl font-bold text-[#c8ff45] sm:text-3xl">0</p>
-    </div>
+        <div class="stat">
+          <p class="stat-label">Time</p>
+          <p class="stat-value"><span id="timer">30</span><span class="unit">s</span></p>
+        </div>
 
-    <div class="rounded-2xl border border-white/5 bg-[#151922] p-3 sm:p-4">
-      <p class="text-[10px] tracking-wider text-gray-400">TIME</p>
-      <p class="mt-2 text-2xl font-bold sm:text-3xl">
-        <span id="timer">30</span><span class="text-[#c8ff45]">s</span>
-      </p>
-    </div>
+        <div class="stat">
+          <p class="stat-label">Lives</p>
+          <div id="lives" class="stat-value">&#x2665; x 3</div>
+        </div>
 
-    <div class="rounded-2xl border border-white/5 bg-[#151922] p-3 sm:p-4">
-      <p class="text-[10px] tracking-wider text-gray-400">LIVES</p>
-      <div id="lives" class="mt-3 flex flex-wrap gap-1 text-lg text-[#ff7777]">
-        <span>♥</span><span>♥</span><span>♥</span>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- Game Board: Right Side -->
-  <section class="min-w-0 rounded-3xl border border-white/10 bg-[#11151d] p-3 sm:p-5">
-
-    <div class="mb-4 flex items-center justify-between gap-2">
-      <h2 class="text-xs font-semibold tracking-wide sm:text-sm">
-        THE PLAYGROUND
-      </h2>
-
-      <span class="shrink-0 rounded-full border border-white/10 px-2 py-1 text-[10px] text-[#c8ff45] sm:px-3 sm:text-xs">
-        3 × 3
-      </span>
-    </div>
-
-<!-- Game Grid -->
-      <div id="game-grid" class="grid grid-cols-3 gap-3 sm:gap-4">
-
-        <button type="button" class="hole" data-index="0" aria-label="Hole 1">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
+        <div class="stat">
+          <p class="stat-label">High score</p>
+          <div class="best-row">
+            <span class="trophy">🏆</span>
+            <p id="high-score" class="stat-value">0</p>
           </div>
-        </button>
+          <p class="stat-note">Personal best</p>
+        </div>
+      </section>
 
-        <button type="button" class="hole" data-index="1" aria-label="Hole 2">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
+      <section class="board">
+        <div class="board-head">
+          <h2 class="board-title">The playground</h2>
+          <span class="pill">3 × 3</span>
+        </div>
 
-        <button type="button" class="hole" data-index="2" aria-label="Hole 3">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
+        <div id="game-grid">
+          <button type="button" class="hole" data-index="0" aria-label="Hole 1"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="1" aria-label="Hole 2"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="2" aria-label="Hole 3"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="3" aria-label="Hole 4"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="4" aria-label="Hole 5"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="5" aria-label="Hole 6"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="6" aria-label="Hole 7"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="7" aria-label="Hole 8"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+          <button type="button" class="hole" data-index="8" aria-label="Hole 9"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
+        </div>
 
-        <button type="button" class="hole" data-index="3" aria-label="Hole 4">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
-
-        <button type="button" class="hole" data-index="4" aria-label="Hole 5">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
-
-        <button type="button" class="hole" data-index="5" aria-label="Hole 6">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
-
-        <button type="button" class="hole" data-index="6" aria-label="Hole 7">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
-
-        <button type="button" class="hole" data-index="7" aria-label="Hole 8">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
-
-        <button type="button" class="hole" data-index="8" aria-label="Hole 9">
-          <div class="creature" aria-hidden="true">
-            <span class="ear left"></span>
-            <span class="ear right"></span>
-            <span class="eyes"></span>
-            <span class="mouth"></span>
-            <span class="cheek left"></span>
-            <span class="cheek right"></span>
-          </div>
-        </button>
-
-      </div>
-
-    <p id="game-status" aria-live="polite"
-       class="mt-4 text-center text-xs text-gray-400 sm:text-sm">
-      Ready? Let's catch this beast.
-    </p>
-
-  </section>
-
-</div>
-
-    <!-- Controls -->
-    <div class="grid grid-cols-2 gap-3">
-
-      <button type="button" id="start-btn"
-        class="w-full rounded-2xl bg-[#c8ff45] py-4
-               text-sm font-extrabold tracking-wide text-[#101409]
-               transition hover:bg-[#d7ff78] active:scale-[0.98]">
-        ▶ &nbsp; START GAME
-      </button>
-
-      <button type="button" id="reset-btn"
-        class="w-full rounded-2xl border border-white/10
-               bg-[#202530] py-4 text-sm font-bold tracking-wide
-               text-white transition hover:bg-[#303644]
-               active:scale-[0.98]">
-        ↻ &nbsp; RESET
-      </button>
+        <p id="game-status" aria-live="polite">Ready? Let's catch this beast.</p>
+      </section>
 
     </div>
 
-    <!-- Footer -->
-    <footer class="flex flex-wrap items-center justify-center gap-x-2
-                   gap-y-1 text-center text-[10px] font-medium
-                   tracking-[0.12em] text-gray-600 sm:text-xs">
-      <span>30 SECONDS</span>
-      <span class="text-[#c8ff45]">·</span>
-      <span>3 LIVES</span>
-      <span class="text-[#c8ff45]">·</span>
-      <span>HOW MANY CAN YOU CATCH?</span>
+    <div class="controls">
+      <button type="button" id="start-btn" class="btn">▶ Start game</button>
+      <button type="button" id="reset-btn" class="btn btn-ghost">↻ Reset</button>
+    </div>
+
+    <footer>
+      <span>30 seconds</span>
+      <span>3 lives</span>
+      <span>How many can you catch?</span>
     </footer>
 
   </main>
 
+  <!-- TIME UP OVERLAY -->
+  <section id="time-up-overlay" class="game-over-overlay">
+    <div class="game-over-card">
+      <div class="overlay-emoji">⏱️</div>
+      <p class="overlay-kicker">Time's up</p>
+      <h2>Game over!</h2>
+      <p class="overlay-text">The hunt is over. Here's how you did.</p>
+
+      <div class="score-box">
+        <p>Final score</p>
+        <p id="time-up-score">0</p>
+      </div>
+
+      <button type="button" id="play-again-time-btn" class="btn">↻ Play again</button>
+    </div>
+  </section>
+
+  <!-- NO LIVES OVERLAY -->
+  <section id="lives-out-overlay" class="game-over-overlay">
+    <div class="game-over-card">
+      <div class="overlay-emoji">💔</div>
+      <p class="overlay-kicker">No lives left</p>
+      <h2>You lost!</h2>
+      <p class="overlay-text">Those danger beasts got you!</p>
+
+      <div class="score-box">
+        <p>Final score</p>
+        <p id="lives-out-score">0</p>
+      </div>
+
+      <button type="button" id="play-again-lives-btn" class="btn">↻ Play again</button>
+    </div>
+  </section>
+
   <script src="index.js"></script>
 </body>
+
 </html>
-
-
-
-
-
-
-
