@@ -14,6 +14,7 @@ const livesOutOverlay = document.querySelector("#lives-out-overlay");
 const timeUpScore = document.querySelector("#time-up-score");
 const livesOutScore = document.querySelector("#lives-out-score");
 const highScore = document.querySelector("#high-score");
+const tag = document.querySelector("#tag");
 let scoreCount = 0;
 let timeCount = 30;
 let time;
@@ -21,8 +22,22 @@ let beast;
 let lifeCount = 3;
 let beastTime;
 let StartClickedCounter = 0;
+let displayAnimation="";
 let index = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
+
+// let typeDisplay="Catch the little troublemaker.";
+// let i=0;
+// while(i<typeDisplay.length){
+ 
+//     displayAnimation+=typeDisplay[i];
+  
+//   tag.textContent=`${displayAnimation}`;
+
+// setTimeout(() => {
+//   i++;
+// }, 1000);
+// }
 
 highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
 
@@ -63,7 +78,7 @@ startBtn.addEventListener('click', (e) => {
     beast = setInterval(() => {
       beastShow();
 
-    }, 1200);
+    }, 1100);
 
   } else {
 
@@ -112,7 +127,7 @@ index.forEach((holeNumber) => {
       document.querySelector(`[data-index="${holeNumber}"]`).querySelector("div").classList.add("defeated");
       setTimeout(() => {
         document.querySelector(`[data-index="${holeNumber}"]`).querySelector("div").classList.remove("defeated");
-      }, 300);
+      }, 280);
 
 
     }
@@ -130,7 +145,7 @@ index.forEach((holeNumber) => {
 function beastShow() {
 
   let randomIndex = Math.floor(Math.random() * index.length);
-  if (Math.random() < 0.4) {
+  if (Math.random() < 0.09) {
     document.querySelector(`[data-index="${randomIndex}"]`).querySelector("div").classList.add("danger");
 
   }
