@@ -23,8 +23,8 @@ let beastTime;
 let StartClickedCounter = 0;
 let index = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-let personalBest=localStorage.getItem("personalBest");
-highScore.textContent=`${Number(personalBest)}`;
+
+highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
 
 
 startBtn.addEventListener('click', (e) => {
@@ -38,10 +38,11 @@ startBtn.addEventListener('click', (e) => {
     time = setInterval(() => {
       timeCount--;
       if (timeCount === 0) {
-        let finalTimeOutScore = timeUpOverlay;
+        let finalTimeOutScore = scoreCount;
         if (finalTimeOutScore > Number(highScore.textContent)) {
           localStorage.setItem("personalBest", String(finalTimeOutScore));
-          highScore.textContent = `${Number(finalTimeOutScore)}`;
+
+          highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
         }
 
         reset();
@@ -85,7 +86,7 @@ index.forEach((holeNumber) => {
         let finalLivesOutScore = scoreCount;
         if (finalLivesOutScore > Number(highScore.textContent)) {
           localStorage.setItem("personalBest", String(finalLivesOutScore));
-          highScore.textContent = `${Number(finalLivesOutScore)}`;
+          highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
         }
         reset();
         livesOutScore.textContent = `${finalLivesOutScore}`;
@@ -111,7 +112,7 @@ index.forEach((holeNumber) => {
       document.querySelector(`[data-index="${holeNumber}"]`).querySelector("div").classList.add("defeated");
       setTimeout(() => {
         document.querySelector(`[data-index="${holeNumber}"]`).querySelector("div").classList.remove("defeated");
-      }, 290);
+      }, 300);
 
 
     }
@@ -139,7 +140,7 @@ function beastShow() {
 
     document.querySelector(`[data-index="${randomIndex}"]`).classList.remove(`active`);
     clearInterval(beastTime);
-  }, 950);
+  }, 1000);
 
 
 
