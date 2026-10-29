@@ -2,25 +2,27 @@
 
 **A fast-paced arcade game built with JavaScript.**
 
-Catch the popping creatures, score points, and test your reflexes before the 30-second timer runs out. Can you catch the beast before time runs out?
+Catch the popping creatures, avoid dangerous beasts, and score as many points as possible before the 30-second timer runs out. You have three lives — how long can you survive?
 
-**Live Demo:** [Pop the Beast!](https://suprio-dev.github.io/Pop-the-Beast-/)
+🔗 **Live Demo:** [Pop the Beast!](https://suprio-dev.github.io/Pop-the-Beast-/)
 
 ---
 
 ## ✨ Features
 
-- Interactive 3 × 3 game board
-- Random creature appearances
-- Score tracking for successful hits
-- 30-second countdown timer
-- Lives counter for gameplay
-- Animated creature pop-up and hit effects
-- Custom hammer cursor for an arcade-style experience
-- Start and reset game controls
-- Real-time UI updates using JavaScript
-- Responsive layout with Tailwind CSS
-- Dark UI with lime-green accents
+- 🎯 Interactive 3 × 3 game board
+- 🐾 Random creature spawning
+- 💀 Dangerous beasts that cost you a life when clicked
+- ❤️ Three-life survival system
+- ⏱️ 30-second countdown timer
+- 🏆 High score tracking with `localStorage`
+- 📊 Real-time score and lives updates
+- 💥 Animated creature appearances and hit effects
+- 🔨 Custom hammer cursor for an arcade-style experience
+- 🔄 Start and reset controls
+- 🎮 Game-over screens for time expiry and lost lives
+- 📱 Responsive layout with Tailwind CSS
+- 🌑 Dark UI with lime-green accents
 
 ---
 
@@ -29,10 +31,11 @@ Catch the popping creatures, score points, and test your reflexes before the 30-
 | Technology | Purpose |
 |---|---|
 | HTML5 | Game structure and layout |
-| Tailwind CSS | Styling and responsive UI |
+| Tailwind CSS | Responsive UI styling |
 | CSS3 | Creature design, animations, and transitions |
-| JavaScript | Game logic, event handling, and DOM manipulation |
-| DOM API | Updating scores, timers, lives, and game states |
+| JavaScript | Game logic, event handling, and state management |
+| DOM API | Dynamic updates to scores, timers, lives, and game states |
+| localStorage | Persistent high score across page reloads |
 
 ---
 
@@ -41,39 +44,47 @@ Catch the popping creatures, score points, and test your reflexes before the 30-
 ```text
 Start the Game
       ↓
-Initialize Game Timer
+Initialize Timer & Lives
       ↓
-Select a Random Hole
+Spawn a Random Creature
       ↓
-Display the Creature
+Identify the Creature
       ↓
-Player Clicks the Creature
+ ┌─────────────────┐
+ │ Normal Creature │ → Click → Increase Score
+ └─────────────────┘
+ ┌─────────────────┐
+ │  Danger Beast   │ → Click → Lose a Life
+ └─────────────────┘
       ↓
-Update Score & Hit Animation
+Update Game State
       ↓
-Repeat Until Time Runs Out
+Time Runs Out or Lives Reach Zero
       ↓
-Display Final Game Result
+Display Final Score & Update High Score
 ```
 
-Pop the Beast! randomly displays creatures across a 3 × 3 grid. Players must click the creatures before they disappear to earn points. The game tracks the player's score and remaining time throughout the session.
+Pop the Beast! randomly spawns creatures across a 3 × 3 grid. Click normal creatures to earn points, but watch out for dangerous beasts that cost you a life. The game ends when the timer reaches zero or all three lives are lost.
+
+Your best score is saved using `localStorage`, so it can persist across page reloads in the same browser.
 
 ---
 
-## 🎯 Why I Built It
+## 🎯 What I Practiced
 
-This project was built to practice working with:
+This project helped me practice:
 
 - DOM selection and manipulation
-- Event listeners and click events
-- JavaScript timers using `setInterval()` and `setTimeout()`
+- Event listeners and click handling
+- Timer management with `setInterval()` and `setTimeout()`
 - Random number generation using `Math.random()`
 - Conditional statements and game-state logic
-- CSS class manipulation using `classList`
-- Updating HTML elements dynamically
-- CSS transitions, animations, and pseudo-elements
-- Interactive UI design
-- Responsive layouts using Tailwind CSS
+- CSS class manipulation with `classList`
+- Managing score, timer, and lives
+- Saving and retrieving data with `localStorage`
+- Creating interactive overlays and game-over states
+- CSS animations, transitions, and pseudo-elements
+- Responsive UI development with Tailwind CSS
 
 ---
 
@@ -94,6 +105,6 @@ No external API key is required.
 
 **Completed — v1.0**
 
-Built as a hands-on project to strengthen my JavaScript fundamentals through interactive gameplay, timer management, DOM manipulation, and CSS animations.
+Built as a hands-on project to strengthen my JavaScript fundamentals through interactive gameplay, DOM manipulation, timers, event handling, and persistent browser storage.
 
 More features may be added as the project evolves.
