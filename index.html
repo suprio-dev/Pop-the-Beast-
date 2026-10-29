@@ -354,7 +354,17 @@
     #game-grid .hole:active { transform: scale(.96); }
 
     /* ---------- Buttons ---------- */
-    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+
+.controls.single .btn {
+  grid-column: 1 / -1;
+  width: 55%;
+  justify-self: center;
+}
 
     .btn {
       width: 100%;
@@ -367,7 +377,10 @@
       border-radius: 18px;
       box-shadow: 0 5px 0 var(--ink);
       cursor: pointer;
+      
+      
       transition: transform 90ms ease, box-shadow 90ms ease, filter 120ms ease;
+      
     }
     .btn:hover { filter: brightness(1.08); }
     .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
@@ -460,7 +473,7 @@
     <header>
       <div>
         <h1>Pop the <span>Beast!</span></h1>
-        <p class="tagline" id="tag"></p>
+        <p class="tagline" id="tag">Catch the little troublemaker.</p>
       </div>
       <div class="badge">⚡</div>
     </header>
@@ -516,7 +529,7 @@
 
     </div>
 
-    <div class="controls">
+    <div class="controls single">
       <button type="button" id="start-btn" class="btn">▶ Start game</button>
       <button type="button" id="reset-btn" class="btn btn-ghost">↻ Reset</button>
     </div>

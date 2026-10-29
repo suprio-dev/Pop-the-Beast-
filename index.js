@@ -26,7 +26,7 @@ let displayAnimation="";
 let index = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 
-// let typeDisplay="Catch the little troublemaker.";
+// let typeDisplay="";
 // let i=0;
 // while(i<typeDisplay.length){
  
@@ -40,9 +40,11 @@ let index = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 // }
 
 highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
-
+resetBtn.style.display="none";
 
 startBtn.addEventListener('click', (e) => {
+  startBtn.style.display="none"; 
+  resetBtn.style.display="block";
   scoreCount = 0;
   timeCount = 30;
   StartClickedCounter = 0;
@@ -171,6 +173,8 @@ resetBtn.addEventListener('click', (e) => {
 
 
 function reset() {
+  startBtn.style.display="block";
+  resetBtn.style.display="none";
   timeUpOverlay.classList.remove("show");
   livesOutOverlay.classList.remove("show");
   clearInterval(beast);
