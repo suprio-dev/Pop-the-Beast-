@@ -5,11 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#170f33">
-  <title>Pop the Beast!</title>
+  <meta name="description" content="Enter Pop the Beast! Test your reflexes in a playful arcade game.">
+  <title>Pop the Beast! — Let the Hunt Begin</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -19,564 +20,493 @@
       --mint: #4ff2c8;
       --sun: #ffd23f;
       --hot: #ff4f6d;
-      --hot-d: #b3203d;
       --muted: #b9aee8;
     }
 
-    * { box-sizing: border-box; margin: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
 
     body {
       min-height: 100vh;
-      padding: 2rem 1rem 3rem;
-      font-family: Nunito, system-ui, sans-serif;
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      font-family: Nunito, sans-serif;
       color: #fff;
       background:
-        radial-gradient(circle at 12% 8%, rgba(255, 79, 109, .22), transparent 40%),
-        radial-gradient(circle at 88% 0%, rgba(79, 242, 200, .18), transparent 45%),
-        linear-gradient(180deg, #170f33, #241552 60%, #2e1a5e);
+        radial-gradient(ellipse at 12% 15%, rgba(255, 79, 109, .18), transparent 38%),
+        radial-gradient(ellipse at 90% 12%, rgba(79, 242, 200, .13), transparent 36%),
+        linear-gradient(145deg, #170f33, #241552 60%, #2e1a5e);
       background-attachment: fixed;
+      overflow-x: hidden;
     }
 
-    /* tiny starfield */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
+      z-index: 0;
       pointer-events: none;
-      opacity: .5;
-      background-size: 220px 170px;
+      opacity: .4;
+      background-size: 180px 160px;
       background-image:
         radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-        radial-gradient(1.5px 1.5px at 100px 90px, rgba(255, 255, 255, .7), transparent),
-        radial-gradient(2px 2px at 170px 25px, var(--sun), transparent),
-        radial-gradient(1.5px 1.5px at 60px 140px, var(--mint), transparent);
+        radial-gradient(2px 2px at 110px 90px, var(--sun), transparent),
+        radial-gradient(1.5px 1.5px at 70px 140px, var(--mint), transparent);
     }
 
-    main {
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
       position: relative;
-      display: grid;
-      gap: 1.5rem;
+      z-index: 1;
       width: 100%;
-      max-width: 36rem;
+      max-width: 1050px;
       margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ---------- Header ---------- */
-    header {
+    /* Header */
+
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
     }
 
-    h1 {
-      font-family: Bungee, Impact, sans-serif;
-      font-weight: 400;
-      font-size: clamp(1.9rem, 8vw, 2.8rem);
-      line-height: 1;
-      color: var(--sun);
-      text-shadow: 3px 3px 0 var(--hot), 6px 6px 0 var(--ink);
-    }
-
-    h1 span { display: inline-block; transform: rotate(-3deg); }
-
-    .tagline { margin-top: .9rem; font-weight: 800; font-size: .9rem; color: var(--muted); }
-
-    .badge {
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      width: 3.6rem;
-      height: 3.6rem;
-      font-size: 1.7rem;
-      background: var(--sun);
-      border: 3px solid var(--ink);
-      border-radius: 16px;
-      box-shadow: 0 4px 0 var(--ink);
-      transform: rotate(6deg);
-    }
-
-    /* ---------- Layout + stats ---------- */
-    .layout {
-      display: grid;
-      grid-template-columns: 104px minmax(0, 1fr);
-      align-items: start;
-      gap: .75rem;
-    }
-
-    .stats { display: grid; gap: .75rem; }
-
-    .stat {
-      padding: .7rem .8rem;
-      background: var(--panel);
-      border: 3px solid var(--ink);
-      border-radius: 18px;
-      box-shadow: 0 5px 0 var(--ink), inset 0 2px 0 rgba(255, 255, 255, .08);
-    }
-
-    .stat-label { font-size: .78rem; font-weight: 800; color: var(--muted); }
-
-    .stat-value {
-      margin-top: .3rem;
-      font-family: Bungee, Impact, sans-serif;
-      font-size: clamp(1.5rem, 6vw, 2rem);
-      line-height: 1.1;
-    }
-
-    #score { color: var(--sun); }
-    #timer { color: #fff; }
-    .unit { color: var(--mint); font-size: .6em; }
-    #lives { font-size: 1.05rem; color: var(--hot); padding-top: .25rem; }
-    #high-score { color: var(--mint); }
-
-    .best-row { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
-    .best-row .stat-value { margin-top: 0; }
-    .best-row .trophy { font-size: 1.2rem; }
-    .stat-note { margin-top: .2rem; font-size: .68rem; font-weight: 800; color: #8f82c9; }
-
-    /* ---------- Board ---------- */
-    .board {
-      min-width: 0;
-      padding: .8rem;
-      background: var(--panel);
-      border: 3px solid var(--ink);
-      border-radius: 26px;
-      box-shadow: 0 7px 0 var(--ink), inset 0 2px 0 rgba(255, 255, 255, .08);
-    }
-
-    .board-head {
+    .brand {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
-      margin-bottom: .9rem;
+      gap: .75rem;
+      font: .85rem Bungee, sans-serif;
+      letter-spacing: .2px;
     }
 
-    .board-title { font-family: Bungee, Impact, sans-serif; font-weight: 400; font-size: .85rem; }
+    .brand-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 1.4rem;
+      background: var(--sun);
+      border: 3px solid var(--ink);
+      border-radius: 14px;
+      box-shadow: 0 4px 0 var(--ink);
+      transform: rotate(-5deg);
+    }
 
-    .pill {
-      padding: .15rem .6rem;
-      font-size: .75rem;
-      font-weight: 800;
+    .top-label {
+      padding: .45rem .8rem;
       color: var(--mint);
-      border: 2px solid var(--mint);
-      border-radius: 99px;
-    }
-
-    #game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; }
-
-    #game-status {
-      margin-top: 1rem;
-      text-align: center;
-      font-size: .85rem;
+      font-size: .72rem;
       font-weight: 800;
+      letter-spacing: .8px;
+      border: 1px solid rgba(79, 242, 200, .3);
+      border-radius: 99px;
+      background: rgba(79, 242, 200, .06);
+    }
+
+    /* Hero */
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 0 2rem;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .5rem .9rem;
+      color: var(--mint);
+      font-size: .73rem;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      border: 1px solid rgba(79, 242, 200, .25);
+      border-radius: 99px;
+      background: rgba(79, 242, 200, .06);
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--mint);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--mint);
+    }
+
+    h1 {
+      margin-top: 1.5rem;
+      font: 400 clamp(3rem, 9vw, 6.5rem)/1.12 Bungee, Impact, sans-serif;
+      letter-spacing: -1px;
+      color: var(--sun);
+      text-shadow: 4px 4px 0 var(--hot), 8px 8px 0 var(--ink);
+    }
+
+    h1 span {
+      display: block;
+      color: #fff;
+      text-shadow: 4px 4px 0 var(--panel-2);
+    }
+
+    .hero-description {
+      max-width: 475px;
+      margin-top: 1.5rem;
       color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.9;
     }
 
-    /* ---------- Holes + beasts ---------- */
-    .hole {
+    /* Beast mascot */
+
+    .mascot-wrap {
       position: relative;
-      overflow: hidden;
-      aspect-ratio: 1;
-      min-width: 0;
-      padding: 0;
-      border: 3px solid var(--ink);
-      border-radius: 18px;
-      background:
-        radial-gradient(ellipse 46% 22% at 50% 84%, #07030f 0 98%, transparent 100%),
-        linear-gradient(180deg, #4a33a0, #2e1d6b);
-      transition: border-color 160ms ease, transform 120ms ease;
+      margin: 2.5rem 0 2rem;
     }
 
-    .hole:hover { border-color: var(--mint); }
-
-    /* dirt lip in front of the beast */
-    .hole::after {
-      content: "";
-      position: absolute;
-      z-index: 2;
-      left: -3%;
-      bottom: -3%;
-      width: 106%;
-      height: 26%;
-      pointer-events: none;
-      background: linear-gradient(180deg, #8a5a43, #5a3828);
-      border-top: 3px solid var(--ink);
-      border-radius: 50% 50% 0 0 / 45% 45% 0 0;
+    .mascot {
+      position: relative;
+      width: 112px;
+      height: 100px;
+      display: grid;
+      place-items: center;
+      background: var(--mint);
+      border: 4px solid var(--ink);
+      border-radius: 43% 43% 36% 36%;
+      box-shadow: 0 8px 0 var(--ink), 0 0 30px rgba(79, 242, 200, .12);
+      animation: float 2.6s ease-in-out infinite;
     }
-
-    .creature {
-      --b: #4ff2c8;
-      position: absolute;
-      z-index: 1;
-      bottom: -100%;
-      left: 50%;
-      width: 74%;
-      aspect-ratio: 1;
-      transform: translateX(-50%);
-      border: 3px solid var(--ink);
-      border-radius: 42% 42% 35% 35%;
-      background: radial-gradient(circle at 32% 25%, rgba(255, 255, 255, .5), transparent 35%), var(--b);
-      box-shadow: inset 0 -8px 0 rgba(0, 0, 0, .15);
-      transition: bottom 180ms cubic-bezier(.2, 1.3, .4, 1);
-    }
-
-    .hole.active .creature { bottom: 12%; }
 
     .ear {
       position: absolute;
-      top: -12%;
-      width: 28%;
-      height: 30%;
-      background: var(--b);
-      border: 3px solid var(--ink);
-      border-bottom: 0;
+      top: -21px;
+      width: 31px;
+      height: 40px;
+      background: var(--mint);
+      border: 4px solid var(--ink);
       border-radius: 50% 50% 15% 15%;
     }
-    .ear.left { left: 5%; transform: rotate(-25deg); }
-    .ear.right { right: 5%; transform: rotate(25deg); }
 
-    /* eyes: container + two pseudo eyes, so they scale with the hole */
-    .eyes { position: absolute; top: 34%; left: 20%; width: 60%; height: 19%; }
+    .ear.left {
+      left: 9px;
+      transform: rotate(-24deg);
+    }
 
-    .eyes::before,
-    .eyes::after {
+    .ear.right {
+      right: 9px;
+      transform: rotate(24deg);
+    }
+
+    .eyes {
+      display: flex;
+      gap: 20px;
+      margin-top: 3px;
+    }
+
+    .eyes span {
+      width: 17px;
+      height: 21px;
+      display: block;
+      background: #fff;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .eyes span::after {
       content: "";
       position: absolute;
-      top: 0;
-      height: 100%;
-      aspect-ratio: 1;
+      right: 2px;
+      top: 4px;
+      width: 6px;
+      height: 8px;
+      background: var(--ink);
       border-radius: 50%;
-      background: radial-gradient(circle at 34% 30%, #fff 0 16%, var(--ink) 18%);
     }
-    .eyes::before { left: 0; }
-    .eyes::after { right: 0; }
 
     .mouth {
       position: absolute;
-      top: 62%;
-      left: 38%;
-      width: 24%;
-      height: 10%;
+      left: 43px;
+      bottom: 20px;
+      width: 23px;
+      height: 12px;
       background: var(--ink);
-      border-radius: 4px 4px 14px 14px;
+      border-radius: 3px 3px 12px 12px;
     }
 
-    .cheek {
-      position: absolute;
-      top: 55%;
-      width: 13%;
-      height: 8%;
-      background: rgba(255, 110, 150, .75);
-      border-radius: 50%;
-    }
-    .cheek.left { left: 9%; }
-    .cheek.right { right: 9%; }
-
-    /* ---------- Danger beast ---------- */
-    .creature.danger { --b: #ff4f6d; border-radius: 35% 35% 45% 45%; }
-
-    .creature.danger .ear {
-      top: -14%;
-      height: 32%;
-      background: var(--sun);
-      border: 0;
-      border-radius: 0;
-      clip-path: polygon(50% 0, 100% 100%, 0 100%);
-    }
-
-    .creature.danger .eyes::before,
-    .creature.danger .eyes::after { background: #fff; }
-    .creature.danger .eyes::before { clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 100%); }
-    .creature.danger .eyes::after { clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%); }
-
-    .creature.danger .mouth {
-      left: 32%;
-      width: 36%;
-      height: 14%;
-      background: linear-gradient(180deg, #fff 0 35%, var(--ink) 35%);
-    }
-
-    .hole.active .creature.danger { animation: danger-glow .45s ease-in-out infinite alternate; }
-
-    @keyframes danger-glow {
-      to { box-shadow: 0 0 22px 6px rgba(255, 79, 109, .7), inset 0 -8px 0 rgba(0, 0, 0, .15); }
-    }
-
-    /* ---------- Defeated (must stay after .danger) ---------- */
-    .creature.defeated {
-      bottom: 12%;
-      transform: translateX(-50%) scale(1.15, .5);
-      border-radius: 45% 45% 30% 30%;
-      filter: brightness(.88);
-      transition: transform 120ms ease-out, filter 120ms ease-out;
-    }
-
-    .creature.defeated .eyes::before,
-    .creature.defeated .eyes::after {
-      content: "×";
-      display: grid;
-      place-items: center;
-      clip-path: none;
-      background: none;
-      color: var(--ink);
-      font: 800 clamp(1rem, 4.5vw, 1.6rem) / 1 Nunito, sans-serif;
-    }
-
-    .creature.defeated .mouth { top: 66%; left: 42%; width: 16%; height: 12%; border-radius: 50%; }
-
-    .creature.defeated::before,
-    .creature.defeated::after {
+    .spark {
       position: absolute;
       color: var(--sun);
-      animation: impact-pop 250ms ease-out;
-    }
-    .creature.defeated::before { content: "✦"; top: -22%; left: -12%; font-size: 1.4rem; }
-    .creature.defeated::after { content: "✦"; top: -16%; right: -12%; font-size: 1.05rem; }
-
-    .hole:has(.creature.defeated) { animation: shake 220ms ease-out; }
-
-    @keyframes shake {
-      25% { translate: -3px 0; }
-      75% { translate: 3px 0; }
+      font-size: 1.5rem;
+      animation: twinkle 1.8s ease-in-out infinite alternate;
     }
 
-    @keyframes impact-pop {
-      from { opacity: 0; transform: scale(.3) rotate(-30deg); }
-      to { opacity: 1; transform: scale(1) rotate(0); }
+    .spark.one {
+      top: -10px;
+      left: -28px;
     }
 
-    /* ---------- Hammer cursor ---------- */
-    #game-grid,
-    #game-grid .hole {
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg transform='rotate(-40 20 20)'%3E%3Crect x='17' y='14' width='7' height='22' rx='2' fill='%23c8ff45' stroke='%2317200e' stroke-width='1.5'/%3E%3Crect x='7' y='5' width='27' height='12' rx='3' fill='%23d9e1ec' stroke='%2317202e' stroke-width='2'/%3E%3Crect x='9' y='7' width='23' height='3' rx='1' fill='%23ffffff' opacity='.7'/%3E%3C/g%3E%3C/svg%3E") 12 10, crosshair;
+    .spark.two {
+      right: -30px;
+      bottom: 8px;
+      color: var(--hot);
+      animation-delay: .6s;
     }
-    #game-grid .hole:active { transform: scale(.96); }
 
-    /* ---------- Buttons ---------- */
-  .controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .75rem;
-}
+    /* CTA */
 
-.controls.single .btn {
-  grid-column: 1 / -1;
-  width: 55%;
-  justify-self: center;
-}
-
-    .btn {
-      width: 100%;
-      padding: 1rem;
-      font-family: Bungee, Impact, sans-serif;
-      font-size: .9rem;
+    .play-link {
+      min-width: 240px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: .85rem;
+      padding: 1.1rem 1.6rem;
       color: var(--ink);
+      font: .95rem Bungee, sans-serif;
       background: var(--sun);
       border: 3px solid var(--ink);
-      border-radius: 18px;
-      box-shadow: 0 5px 0 var(--ink);
-      cursor: pointer;
-      
-      
-      transition: transform 90ms ease, box-shadow 90ms ease, filter 120ms ease;
-      
+      border-radius: 17px;
+      box-shadow: 0 6px 0 var(--ink);
+      transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
     }
-    .btn:hover { filter: brightness(1.08); }
-    .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
-    .btn-ghost { color: #fff; background: var(--panel-2); }
 
-    button:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+    .play-link:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.07);
+      box-shadow: 0 9px 0 var(--ink);
+    }
 
-    footer {
+    .play-link:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 var(--ink);
+    }
+
+    .play-link:focus-visible {
+      outline: 3px solid var(--mint);
+      outline-offset: 5px;
+    }
+
+    .arrow {
+      font-size: 1.25rem;
+      transition: transform 150ms ease;
+    }
+
+    .play-link:hover .arrow {
+      transform: translateX(5px);
+    }
+
+    .cta-hint {
+      margin-top: 1.3rem;
+      color: #9386cc;
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    /* Game facts */
+
+    .game-facts {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: .4rem 1.25rem;
-      font-size: .75rem;
-      font-weight: 800;
-      color: #8f82c9;
-      text-align: center;
+      gap: .75rem;
+      margin-top: 2.5rem;
     }
 
-    /* ---------- Overlays ---------- */
-    .game-over-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display: none;
+    .fact {
+      display: flex;
       align-items: center;
+      gap: .5rem;
+      padding: .65rem .9rem;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 800;
+      background: rgba(42, 27, 94, .65);
+      border: 1px solid rgba(185, 174, 232, .14);
+      border-radius: 12px;
+    }
+
+    .fact strong {
+      color: #fff;
+    }
+
+    /* Footer */
+
+    footer {
+      position: relative;
+      z-index: 1;
+      display: flex;
       justify-content: center;
-      padding: 1rem;
-      background: rgba(14, 8, 36, .72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    .game-over-overlay.show { display: flex; }
-
-    .game-over-card {
-      width: 100%;
-      max-width: 380px;
-      padding: 2rem 1.5rem;
+      flex-wrap: wrap;
+      gap: .5rem 1rem;
+      padding-top: 1.25rem;
+      color: #8275ba;
+      font-size: .73rem;
+      font-weight: 800;
       text-align: center;
-      background: var(--panel);
-      border: 4px solid var(--mint);
-      border-radius: 28px;
-      box-shadow: 0 8px 0 var(--ink), 0 30px 80px rgba(0, 0, 0, .5);
-      animation: modal-enter 380ms cubic-bezier(.2, 1.4, .4, 1);
-    }
-    #lives-out-overlay .game-over-card { border-color: var(--hot); }
-
-    .overlay-emoji { display: inline-block; font-size: 3.2rem; animation: wiggle 900ms ease-in-out 250ms 2; }
-    .overlay-kicker { margin-top: .6rem; font-size: .9rem; font-weight: 800; color: var(--muted); }
-    .game-over-card h2 { margin-top: .3rem; font-family: Bungee, Impact, sans-serif; font-weight: 400; font-size: 2rem; }
-    .overlay-text { margin-top: .6rem; font-weight: 600; color: var(--muted); }
-
-    .score-box { margin: 1.4rem 0; padding: 1rem; background: var(--ink); border-radius: 18px; }
-    .score-box p:first-child { font-size: .8rem; font-weight: 800; color: var(--muted); }
-    .score-box p:last-child { margin-top: .3rem; font-family: Bungee, Impact, sans-serif; font-size: 3.4rem; line-height: 1; }
-    #time-up-score { color: var(--sun); }
-    #lives-out-score { color: var(--hot); }
-
-    @keyframes modal-enter {
-      from { opacity: 0; transform: translateY(20px) scale(.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    @keyframes wiggle {
-      25% { transform: rotate(-12deg); }
-      75% { transform: rotate(12deg); }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-9px) rotate(2deg); }
     }
 
-    /* ---------- Responsive + motion ---------- */
-    @media (min-width: 640px) {
-      .layout { grid-template-columns: 150px minmax(0, 1fr); gap: 1rem; }
-      .board { padding: 1.1rem; }
-      #game-grid { gap: .9rem; }
+    @keyframes twinkle {
+      from { transform: scale(.85) rotate(-10deg); opacity: .65; }
+      to { transform: scale(1.15) rotate(12deg); opacity: 1; }
     }
 
-    @media (max-width: 380px) {
-      .hole { border-radius: 13px; }
-      .stat { padding: .6rem; }
+    @media (min-height: 850px) {
+      .hero {
+        padding-top: 4rem;
+        padding-bottom: 3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1.2rem 1rem;
+      }
+
+      .brand {
+        font-size: .7rem;
+        gap: .55rem;
+      }
+
+      .brand-icon {
+        width: 38px;
+        height: 38px;
+      }
+
+      .top-label {
+        font-size: .62rem;
+        padding: .4rem .55rem;
+      }
+
+      .hero {
+        padding: 3rem 0 2rem;
+      }
+
+      h1 {
+        font-size: clamp(2.7rem, 12vw, 4rem);
+      }
+
+      .hero-description {
+        font-size: .9rem;
+      }
+
+      .mascot-wrap {
+        margin: 2.2rem 0 1.8rem;
+      }
+
+      .game-facts {
+        gap: .55rem;
+        margin-top: 2rem;
+      }
+
+      .fact {
+        padding: .55rem .7rem;
+        font-size: .7rem;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 
 <body>
+  <main class="page">
 
-  <main>
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Pop the Beast home">
+        <span class="brand-icon" aria-hidden="true">&#x26A1;</span>
+        <span>POP THE BEAST!</span>
+      </a>
 
-    <header>
-      <div>
-        <h1>Pop the <span>Beast!</span></h1>
-        <p class="tagline" id="tag">Catch the little troublemaker.</p>
-      </div>
-      <div class="badge">⚡</div>
+      <span class="top-label">ARCADE GAME</span>
     </header>
 
-    <div class="layout">
+    <section class="hero">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        READY FOR THE HUNT?
+      </div>
 
-      <section class="stats">
-        <div class="stat">
-          <p class="stat-label">Points</p>
-          <p id="score" class="stat-value">0</p>
-        </div>
+      <h1>
+        POP THE
+        <span>BEAST!</span>
+      </h1>
 
-        <div class="stat">
-          <p class="stat-label">Time</p>
-          <p class="stat-value"><span id="timer">30</span><span class="unit">s</span></p>
-        </div>
+      <p class="hero-description">
+        Mischievous little beasts are hiding everywhere.
+        Trust your reflexes, aim carefully, and get ready
+        for a whole lot of chaos.
+      </p>
 
-        <div class="stat">
-          <p class="stat-label">Lives</p>
-          <div id="lives" class="stat-value">&#x2665; x 3</div>
-        </div>
+      <div class="mascot-wrap" aria-hidden="true">
+        <span class="spark one">&#x2726;</span>
 
-        <div class="stat">
-          <p class="stat-label">High score</p>
-          <div class="best-row">
-            <span class="trophy">🏆</span>
-            <p id="high-score" class="stat-value">0</p>
+        <div class="mascot">
+          <span class="ear left"></span>
+          <span class="ear right"></span>
+
+          <div class="eyes">
+            <span></span>
+            <span></span>
           </div>
-          <p class="stat-note">Personal best</p>
-        </div>
-      </section>
 
-      <section class="board">
-        <div class="board-head">
-          <h2 class="board-title">The playground</h2>
-          <span class="pill">Yard</span>
+          <span class="mouth"></span>
         </div>
 
-        <div id="game-grid">
-          <button type="button" class="hole" data-index="0" aria-label="Hole 1"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="1" aria-label="Hole 2"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="2" aria-label="Hole 3"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="3" aria-label="Hole 4"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="4" aria-label="Hole 5"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="5" aria-label="Hole 6"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="6" aria-label="Hole 7"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="7" aria-label="Hole 8"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-          <button type="button" class="hole" data-index="8" aria-label="Hole 9"><div class="creature" aria-hidden="true"><span class="ear left"></span><span class="ear right"></span><span class="eyes"></span><span class="mouth"></span><span class="cheek left"></span><span class="cheek right"></span></div></button>
-        </div>
+        <span class="spark two">&#x2726;</span>
+      </div>
 
-        <p id="game-status" aria-live="polite">Ready? Let's catch this beast.</p>
-      </section>
+      <a class="play-link" href="mode.html">
+        <span>PLAY NOW</span>
+        <span class="arrow" aria-hidden="true">&#x2192;</span>
+      </a>
 
-    </div>
+      <p class="cta-hint">
+        &#x26A1; Your next challenge awaits
+      </p>
 
-    <div class="controls single">
-      <button type="button" id="start-btn" class="btn">▶ Start game</button>
-      <button type="button" id="reset-btn" class="btn btn-ghost">↻ Reset</button>
-    </div>
-
-    <footer>
-      <span>30 seconds</span>
-      <span>3 lives</span>
-      <span>How many can you catch?</span>
-    </footer>
+      <div class="game-facts">
+        <div class="fact">&#x2665; <strong>2 Lives</strong></div>
+        <div class="fact">&#x25C8; <strong>9 Hiding Spots</strong></div>
+        <div class="fact">&#x26A1; <strong>Quick Reflexes</strong></div>
+      </div>
+    </section>
 
   </main>
 
-  <!-- TIME UP OVERLAY -->
-  <section id="time-up-overlay" class="game-over-overlay">
-    <div class="game-over-card">
-      <div class="overlay-emoji">⏱️</div>
-      <p class="overlay-kicker">Time's up</p>
-      <h2>Game over!</h2>
-      <p class="overlay-text">The hunt is over. Here's how you did.</p>
-
-      <div class="score-box">
-        <p>Final score</p>
-        <p id="time-up-score">0</p>
-      </div>
-
-      <button type="button" id="play-again-time-btn" class="btn">↻ Play again</button>
-    </div>
-  </section>
-
-  <!-- NO LIVES OVERLAY -->
-  <section id="lives-out-overlay" class="game-over-overlay">
-    <div class="game-over-card">
-      <div class="overlay-emoji">💔</div>
-      <p class="overlay-kicker">No lives left</p>
-      <h2>You lost!</h2>
-      <p class="overlay-text">Those danger beasts got you!</p>
-
-      <div class="score-box">
-        <p>Final score</p>
-        <p id="lives-out-score">0</p>
-      </div>
-
-      <button type="button" id="play-again-lives-btn" class="btn">↻ Play again</button>
-    </div>
-  </section>
-
-  <script src="index.js"></script>
+  <footer>
+    <span>One playground.</span>
+    <span>Two ways to play.</span>
+    <span>Pure chaos.</span>
+  </footer>
 </body>
 
 </html>
