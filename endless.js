@@ -57,7 +57,7 @@ index.forEach((holeNumber) => {
         let finalLivesOutScore = scoreCount;
 
         if (finalLivesOutScore > Number(highScore.textContent)) {
-          localStorage.setItem("personalBest", String(finalLivesOutScore));
+          localStorage.setItem("endlessBest", String(finalLivesOutScore));
           highScore.textContent = `${Number(localStorage.getItem("endlessBest"))}`;
         }
 
