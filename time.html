@@ -699,7 +699,7 @@
       }
     }
 
-.back-link {
+    .back-link {
       display: inline-flex;
       align-items: center;
       gap: .5rem;
@@ -713,13 +713,43 @@
       color: var(--sun);
     }
 
+    @keyframes screenShake {
+      0% {
+        transform: translate(0);
+      }
+
+      20% {
+        transform: translate(-5px, 3px);
+      }
+
+      40% {
+        transform: translate(5px, -3px);
+      }
+
+      60% {
+        transform: translate(-5px, -2px);
+      }
+
+      80% {
+        transform: translate(5px, 2px);
+      }
+
+      100% {
+        transform: translate(0);
+      }
+    }
+
+    .shake {
+      animation: screenShake 0.3s ease-in-out;
+    }
   </style>
 </head>
 <span aria-hidden="true">&#x2190;</span>
 <a class="back-link" href="mode.html">
-        
-        Back to Modes
-      </a>
+
+  Back to Modes
+</a>
+
 <body>
 
   <main>

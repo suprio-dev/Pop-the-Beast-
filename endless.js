@@ -17,7 +17,7 @@ const tag = document.querySelector("#tag");
 
 let scoreCount = 0;
 let beast;
-let lifeCount = 2;
+let lifeCount = 3;
 let beastTime;
 let StartClickedCounter = 0;
 let displayAnimation = "";
@@ -31,7 +31,7 @@ startBtn.addEventListener('click', (e) => {
   resetBtn.style.display = "block";
   scoreCount = 0;
   StartClickedCounter = 0;
-  lifeCount = 2;
+  lifeCount = 3;
   StartClickedCounter++;
 
   if (StartClickedCounter === 1) {
@@ -52,7 +52,9 @@ index.forEach((holeNumber) => {
 
     if (document.querySelector(`[data-index="${holeNumber}"]`).querySelector("div").classList.contains("danger")) {
       lifeCount--;
-
+      gameGrid.classList.remove("shake");
+      void gameGrid.offsetWidth;
+      gameGrid.classList.add("shake");
       if (lifeCount === 0) {
         let finalLivesOutScore = scoreCount;
 
@@ -100,7 +102,7 @@ function beastShow() {
 
   let randomIndex = Math.floor(Math.random() * index.length);
 
-  if (Math.random() < 0.09) {
+  if (Math.random() < 0.15) {
     document.querySelector(`[data-index="${randomIndex}"]`).querySelector("div").classList.add("danger");
   }
 
@@ -126,7 +128,7 @@ function reset() {
 
   score.textContent = `0`;
   scoreCount = 0;
-  lifeCount = 2;
+  lifeCount = 3;
   lives.innerHTML = `&#x2665; x ${lifeCount}`;
   StartClickedCounter = 0;
   gameStatus.textContent = `Ready? Let's catch this beast.`;

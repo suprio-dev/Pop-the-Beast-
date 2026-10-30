@@ -24,16 +24,16 @@ let beast;
 let lifeCount = 2;
 let beastTime;
 let StartClickedCounter = 0;
-let displayAnimation="";
+let displayAnimation = "";
 let index = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 
-highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
-resetBtn.style.display="none";
+highScore.textContent = `${Number(localStorage.getItem("personalBest"))}`;
+resetBtn.style.display = "none";
 
 startBtn.addEventListener('click', (e) => {
-  startBtn.style.display="none"; 
-  resetBtn.style.display="block";
+  startBtn.style.display = "none";
+  resetBtn.style.display = "block";
   scoreCount = 0;
   timeCount = 30;
   StartClickedCounter = 0;
@@ -48,7 +48,7 @@ startBtn.addEventListener('click', (e) => {
         if (finalTimeOutScore > Number(highScore.textContent)) {
           localStorage.setItem("personalBest", String(finalTimeOutScore));
 
-          highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
+          highScore.textContent = `${Number(localStorage.getItem("personalBest"))}`;
         }
 
         reset();
@@ -88,11 +88,14 @@ index.forEach((holeNumber) => {
 
     if (document.querySelector(`[data-index="${holeNumber}"]`).querySelector("div").classList.contains("danger")) {
       lifeCount--;
+      gameGrid.classList.remove("shake");
+      void gameGrid.offsetWidth;
+      gameGrid.classList.add("shake");
       if (lifeCount === 0) {
         let finalLivesOutScore = scoreCount;
         if (finalLivesOutScore > Number(highScore.textContent)) {
           localStorage.setItem("personalBest", String(finalLivesOutScore));
-          highScore.textContent=`${Number(localStorage.getItem("personalBest"))}`;
+          highScore.textContent = `${Number(localStorage.getItem("personalBest"))}`;
         }
         reset();
         livesOutScore.textContent = `${finalLivesOutScore}`;
@@ -162,8 +165,8 @@ resetBtn.addEventListener('click', (e) => {
 
 
 function reset() {
-  startBtn.style.display="block";
-  resetBtn.style.display="none";
+  startBtn.style.display = "block";
+  resetBtn.style.display = "none";
   timeUpOverlay.classList.remove("show");
   livesOutOverlay.classList.remove("show");
   clearInterval(beast);
