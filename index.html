@@ -434,6 +434,222 @@
         transition: none !important;
       }
     }
+
+.instructions-btn {
+  font-family: Nunito, sans-serif;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.instructions-btn:hover {
+  background: rgba(79, 242, 200, .14);
+  border-color: var(--mint);
+  transform: translateY(-2px);
+}
+
+.instructions-btn:active {
+  transform: translateY(1px);
+}
+
+.instructions-btn:focus-visible {
+  outline: 3px solid var(--sun);
+  outline-offset: 4px;
+}
+
+/* Instructions Overlay */
+
+.instructions-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(8, 4, 25, .82);
+  backdrop-filter: blur(9px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease, visibility 220ms ease;
+}
+
+.instructions-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.instructions-modal {
+  position: relative;
+  width: 100%;
+  max-width: 570px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 2rem;
+  color: #fff;
+  background: linear-gradient(145deg, #2a1b5e, #170f33);
+  border: 2px solid rgba(79, 242, 200, .35);
+  border-radius: 24px;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, .5);
+  transform: translateY(20px) scale(.97);
+  transition: transform 220ms ease;
+}
+
+.instructions-overlay.show .instructions-modal {
+  transform: translateY(0) scale(1);
+}
+
+.instructions-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  color: var(--muted);
+  font-size: 1.7rem;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.instructions-close:hover {
+  color: var(--hot);
+  background: rgba(255, 79, 109, .12);
+}
+
+.instructions-heading {
+  text-align: center;
+  padding: .5rem 1rem 1.5rem;
+}
+
+.instructions-icon {
+  display: block;
+  margin-bottom: .6rem;
+  color: var(--sun);
+  font-size: 2rem;
+}
+
+.instructions-heading > p {
+  color: var(--mint);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.instructions-heading h2 {
+  margin-top: .5rem;
+  color: var(--sun);
+  font: 1.8rem Bungee, sans-serif;
+}
+
+.instructions-subtitle {
+  display: block;
+  margin-top: .5rem;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+.instructions-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.guide-section {
+  padding: 1.1rem;
+  background: rgba(14, 8, 36, .45);
+  border: 1px solid rgba(185, 174, 232, .13);
+  border-radius: 15px;
+}
+
+.guide-section h3 {
+  margin-bottom: .8rem;
+  color: var(--mint);
+  font-size: .95rem;
+}
+
+.guide-section > p {
+  color: var(--muted);
+  font-size: .85rem;
+  line-height: 1.8;
+}
+
+.guide-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .8rem;
+  padding: .65rem 0;
+}
+
+.guide-item + .guide-item {
+  border-top: 1px solid rgba(185, 174, 232, .1);
+}
+
+.guide-symbol {
+  font-size: 1.25rem;
+}
+
+.guide-item strong,
+.guide-mode strong {
+  color: #fff;
+  font-size: .85rem;
+}
+
+.guide-item p,
+.guide-mode p {
+  margin-top: .2rem;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+.guide-mode + .guide-mode {
+  margin-top: .9rem;
+  padding-top: .9rem;
+  border-top: 1px solid rgba(185, 174, 232, .1);
+}
+
+.guide-footer {
+  padding: .7rem;
+  color: var(--sun);
+  font-size: .8rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.guide-done {
+  width: 100%;
+  margin-top: 1.2rem;
+  padding: .9rem;
+  color: var(--ink);
+  font: .85rem Bungee, sans-serif;
+  background: var(--sun);
+  border: 2px solid var(--ink);
+  border-radius: 13px;
+  box-shadow: 0 4px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.guide-done:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--ink);
+}
+
+.guide-done:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+@media (max-width: 480px) {
+  .instructions-modal {
+    padding: 1.4rem;
+    border-radius: 19px;
+  }
+
+  .instructions-heading h2 {
+    font-size: 1.5rem;
+  }
+}
+
   </style>
 </head>
 
@@ -446,7 +662,10 @@
         <span>POP THE BEAST!</span>
       </a>
 
-      <span class="top-label">ARCADE GAME</span>
+      <button class="top-label instructions-btn" id="instructions-btn" type="button">
+  <span aria-hidden="true">&#x2139;</span>
+  
+</button>
     </header>
 
     <section class="hero">
@@ -494,7 +713,7 @@
       </p>
 
       <div class="game-facts">
-        <div class="fact">&#x2665; <strong>2 Lives</strong></div>
+        <div class="fact">&#x2665; <strong>2-3 Lives</strong></div>
         <div class="fact">&#x25C8; <strong>9 Hiding Spots</strong></div>
         <div class="fact">&#x26A1; <strong>Quick Reflexes</strong></div>
       </div>
@@ -507,6 +726,102 @@
     <span>Two ways to play.</span>
     <span>Pure chaos.</span>
   </footer>
+  <div class="instructions-overlay" id="instructions-overlay">
+
+  <div class="instructions-modal" role="dialog" aria-modal="true"
+    aria-labelledby="instructions-title">
+
+    <button class="instructions-close" id="instructions-close"
+      type="button" aria-label="Close instructions">
+      &times;
+    </button>
+
+    <div class="instructions-heading">
+      <span class="instructions-icon">&#x26A1;</span>
+      <p>THE PLAYER'S GUIDE</p>
+      <h2 id="instructions-title">GAME GUIDE</h2>
+      <span class="instructions-subtitle">
+        Everything you need before the hunt begins.
+      </span>
+    </div>
+
+    <div class="instructions-content">
+
+      <section class="guide-section">
+        <h3>&#x1F3AE; About This Game</h3>
+        <p>
+          Pop the Beast! is a fast-paced arcade game where you test
+          your reflexes by catching mischievous creatures appearing
+          across a 3 × 3 grid. Score points, avoid dangerous beasts,
+          and challenge yourself to beat your personal best!
+        </p>
+      </section>
+
+      <section class="guide-section">
+        <h3>&#x1F4D6; How to Play</h3>
+
+        <div class="guide-item">
+          <span class="guide-symbol">&#x1F7E2;</span>
+          <div>
+            <strong>Catch Normal Creatures</strong>
+            <p>Click normal creatures to increase your score.</p>
+          </div>
+        </div>
+
+        <div class="guide-item">
+          <span class="guide-symbol">&#x1F480;</span>
+          <div>
+            <strong>Avoid Dangerous Beasts</strong>
+            <p>Clicking a dangerous beast costs you one life.</p>
+          </div>
+        </div>
+
+        <div class="guide-item">
+          <span class="guide-symbol">&#x2764;</span>
+          <div>
+            <strong>Protect Your Lives</strong>
+            <p>Keep your remaining lives safe. Lose them all and the game ends.</p>
+          </div>
+        </div>
+
+        <div class="guide-item">
+          <span class="guide-symbol">&#x1F3C6;</span>
+          <div>
+            <strong>Beat Your High Score</strong>
+            <p>Your best score is saved in your browser using localStorage.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="guide-section">
+        <h3>&#x1F3AF; Choose Your Challenge</h3>
+
+        <div class="guide-mode">
+          <strong>&#x23F1; Time Attack</strong>
+          <p>Score as many points as possible before the 30-second timer runs out.</p>
+        </div>
+
+        <div class="guide-mode">
+          <strong>&#x267E; Endless Mode</strong>
+          <p>There is no countdown. Keep playing until you lose all your lives.</p>
+        </div>
+      </section>
+
+      <p class="guide-footer">
+        &#x26A1; Quick reflexes. Careful clicks. Happy hunting!
+      </p>
+
+    </div>
+
+    <a href="mode.html">
+      <button class="guide-done" id="guide-done" type="button">
+      GOT IT! LET'S PLAY
+    </button>
+    </a>
+
+  </div>
+</div>
+<script src="index.js"></script>
 </body>
 
 </html>
