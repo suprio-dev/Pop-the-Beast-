@@ -26,6 +26,7 @@ Catch the popping creatures, avoid dangerous beasts, and test your reflexes in t
 - ↩️ **Back to Modes Navigation** — Return to the mode selection screen.
 - 📱 **Responsive Interface** — Play across different screen sizes.
 - 🌑 **Dark Arcade UI** — A vibrant interface with bold colors, glowing accents, and animated elements.
+- 📳 **Screen Shake Effect** — The game screen shakes briefly when a dangerous creature is clicked or a life is lost, adding impactful arcade-style visual feedback.
 
 ---
 
